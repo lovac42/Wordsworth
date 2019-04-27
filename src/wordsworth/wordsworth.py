@@ -4,10 +4,13 @@
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 
 
+import re
+import anki.find
 from aqt import mw
 from aqt.qt import *
-import anki.find
-from .batch import *
+from aqt.utils import getFile, showInfo
+from anki.lang import _
+from .importer import *
 from .const import *
 from .error import *
 
@@ -18,8 +21,7 @@ else:
 
 
 class Wordsworth():
-    batch=BatchProcessor()
-
+    importer=None
 
     def __init__(self, browser):
         self.browser=browser
@@ -68,10 +70,18 @@ class Wordsworth():
         self.cb_overWrite.setText(_('Overwrite rank field if not empty?'))
         gridLayout.addWidget(self.cb_overWrite, r, 0, 1, 1)
 
+        r+=1
+        lbl_help=QtWidgets.QLabel()
+        lbl_help.setText(_("""<br><i>Exact matches only, 
+                           beware of hidden html tags.</i>"""))
+        gridLayout.addWidget(lbl_help,r,0,1,1)
+
+
         self.btn_save=QPushButton('Write')
         self.btn_save.setEnabled(False)
         self.btn_save.clicked.connect(self.onWrite)
         gridLayout.addWidget(self.btn_save,r,1,1,1)
+
 
         diag=QDialog(self.browser)
         diag.setLayout(layout)
@@ -80,6 +90,10 @@ class Wordsworth():
 
 
     def valueChange(self):
+        if not self.importer or not self.freq_file:
+            self.btn_save.setEnabled(False)
+            return
+
         wdf=self.wordField.currentText()
         rkf=self.rankField.currentText()
         if wdf==rkf:
@@ -88,28 +102,42 @@ class Wordsworth():
             self.btn_save.setEnabled(True)
 
 
+    def getImporter(self, file):
+        for im in Importers:
+            for mext in re.findall("[( ]?\*\.(.+?)[) ]", im[0]):
+                if file.endswith("." + mext):
+                    return im[1]()
+        return Importers[0][1]() #default importer
+
+
     def onImport(self):
+        filt = ";;".join([x[0] for x in Importers])
         self.freq_file=getFile(
             self.browser, _("Choose File"), None,
-            filter="Text separated by space (*)", key="import"
+            filter=filt, key="import"
         )
 
         if not self.freq_file:
             return
 
+        self.importer=self.getImporter(self.freq_file)
+        if not self.importer:
+            return
+
         try:
-            self.batch.setList(self.freq_file)
-            self.batch.checkList()
+            self.importer.setList(self.freq_file)
+            self.importer.checkList()
             self.btn_import.setText("Frequency List Loaded")
             self.valueChange()
 
         except TypeError:
             self.btn_import.setText("Not the right format")
             self.btn_save.setEnabled(False)
-
+            self.importer=None
         except:
             self.btn_import.setText("Error Reading File")
             self.btn_save.setEnabled(False)
+            self.importer=None
 
 
     def onWrite(self):
@@ -117,11 +145,11 @@ class Wordsworth():
             wdf=self.wordField.currentText()
             rkf=self.rankField.currentText()
             ow=self.cb_overWrite==2
-            self.batch.setFields(wdf,rkf,ow)
+            self.importer.setFields(wdf,rkf,ow)
 
             try:
                 nids=self.browser.selectedNotes()
-                self.batch.process(nids)
+                self.importer.process(nids)
             except NoNoteError as err:
                 showInfo(str(err))
             except NoListError as err:

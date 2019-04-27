@@ -6,11 +6,11 @@
 
 from __future__ import unicode_literals
 from aqt import mw
-from aqt.utils import getFile, showInfo
+from aqt.utils import showInfo
 from codecs import open
 import os, re
-from .const import *
-from .error import *
+from ..const import *
+from ..error import *
 
 
 class BatchProcessor:
@@ -30,25 +30,6 @@ class BatchProcessor:
             with open(file, 'r', encoding='utf-8') as f:
                 data=f.read()
             self.freq_list=re.split(r'\r?\n',data)
-
-
-    def checkList(self):
-        lineRank=False
-
-        #Format: word (space) freq_num
-        for line in self.freq_list:
-            if not line: continue #empty lines
-            if not re.match(r'(?:^[^\s]+\s+\d+$)|^\s+$',line):
-                lineRank=True
-                break
-
-        #Format: freq by line number
-        if lineRank:
-            for line in self.freq_list:
-                if not line: continue #empty lines
-                if not re.match(r'^[^\s]+$|^\s+$',line):
-                    self.freq_list=None
-                    raise TypeError
 
 
     def process(self, nids):
@@ -77,18 +58,19 @@ class BatchProcessor:
             if note[self.rank_field] and not self.overwrite:
                 continue
 
-            i=1
-            for line in self.freq_list:
-                if line.find(note[self.word_field]) > -1:
-                    try:
-                        wd,freq=line.split() #word-space-freq format
-                    except ValueError: #sort by line number
-                        wd=line
-                        freq=str(i)
+            self.matchLine(note)
 
-                    if wd==note[self.word_field].replace(" ", ""):
-                        note[self.rank_field]=freq
-                        note.flush()
-                        break
-                i+=1
 
+    def parse(self, wd):
+        return wd.replace(" ", "")
+        #TODO: add option to strip html
+
+
+    def matchLine(self, note):
+        "abstract method for matching word to list"
+        return
+
+
+    def checkList(self):
+        "abstract method for checking valid dict files"
+        return
