@@ -4,6 +4,7 @@
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 
 
+from anki.lang import _
 from .batch import BatchProcessor
 from .line import LineNumberImporter
 from .space import SpaceSeparatedImporter

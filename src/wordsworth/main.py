@@ -12,7 +12,11 @@ from .const import *
 
 def setupMenu(bws):
     act=QAction("Wordsworth: Word Frequency Ranker", bws)
-    bws.connect(act, SIGNAL("triggered()"), lambda e=bws:Wordsworth(e))
+
+    # ENABLE IF THERE IS NO SHORTCUT CONFLICT
+    # act.setShortcut(QKeySequence("Ctrl+Shift+W"))
+
+    act.triggered.connect(lambda:Wordsworth(bws))
     bws.form.menuEdit.addSeparator()
     bws.form.menuEdit.addAction(act)
 
