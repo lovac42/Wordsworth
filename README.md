@@ -7,8 +7,7 @@ The idea is to rank these words from most frequent to least. Depending on your n
 
 
 ## Technicals:
-Warning: list is loaded into ram first, 10mb file is about 50mb in ram.  
-The draw back of using a list as oppose to using a database is the high wait time.  
+Warning: list is loaded into ram first, 10mb file is about 300mb in ram.  
 
 
 ## Word lists:
@@ -17,7 +16,7 @@ The draw back of using a list as oppose to using a database is the high wait tim
 File extension must end with ```.line```  
 Format: ```{word}``` This is ranked by line number.  
 
-Unfortunately, this list seems to have alot of issue.  
+Unfortunately, this list seems to have alot of issues.  
 https://github.com/first20hours/google-10000-english  
 Rename your download from ```.txt``` to ```.line```  
 
@@ -28,6 +27,9 @@ Format: ```{word}{space or tab}{frequency count}```
 
 This word list has 50k words, mostly from english subtitled movies. It might be good for ESL students, but highly inaccurate for advanced english.
 https://github.com/hermitdave/FrequencyWords/tree/master/content/2016/en
+
+
+## Screenshots:
 
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/menuitem.png?raw=true">  
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/wordsworth.png?raw=true">  
