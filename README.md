@@ -6,6 +6,11 @@ No wordlist is included in this addon. It is intended to work with any language 
 The idea is to rank these words from most frequent to least. Depending on your needs, you would study the most frequent one's first, or separate them into multiple decks and use large interval modifiers to skim over the easy ones.
 
 
+## Technicals:
+Warning: list is loaded into ram first, 10mb file is about 50mb in ram.  
+The draw back of using a list as oppose to using a database is the high wait time.  
+
+
 ## Word lists:
 
 ### Line Count Word List (English):

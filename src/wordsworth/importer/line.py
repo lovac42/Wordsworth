@@ -12,22 +12,24 @@ from .batch import BatchProcessor
 
 class LineNumberImporter(BatchProcessor):
 
-    def checkList(self):
-        for line in self.freq_list:
-            if not line: continue #empty lines
-            if not re.match(r'^[^\s]+$|^\s+$',line):
-                self.freq_list=None
-                raise TypeError
-
-
-    def matchLine(self, note):
+    def setDict(self):
+        self.dict={}
         i=1
         for line in self.freq_list:
-            word=note[self.word_field]
-            if not word: return
-            word=self.parse(word)
-            if word==line:
-                note[self.rank_field]=str(i)
-                note.flush()
+            if not line: continue #empty lines
+            if not re.match(r'^[^\s]+$',line):
+                self.freq_list=None
+                raise TypeError
+            else:
+                self.dict[line]=str(i)
             i+=1
 
+
+    def matchWord(self, note):
+        "space is allowed"
+        try:
+            wd=note[self.word_field]
+            note[self.rank_field]=self.dict[wd]
+            note.flush()
+        except KeyError:
+            return

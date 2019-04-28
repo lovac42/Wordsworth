@@ -14,6 +14,7 @@ from ..error import *
 
 class BatchProcessor:
     freq_list=None
+    dict=None
 
     # def __init__(self):
 
@@ -36,13 +37,8 @@ class BatchProcessor:
             raise NoNoteError
         if not self.freq_list:
             raise NoListError
-
         mw.checkpoint("Wordsworth")
-        mw.progress.start()
         self.processNotes(nids)
-        mw.progress.finish()
-        showInfo("Process complete")
-        mw.reset()
 
 
     def processNotes(self, nids):
@@ -57,7 +53,7 @@ class BatchProcessor:
             if note[self.rank_field] and not self.overwrite:
                 continue
 
-            self.matchLine(note)
+            self.matchWord(note)
 
 
     def parse(self, wd):
@@ -65,11 +61,11 @@ class BatchProcessor:
         #TODO: add option to strip html
 
 
-    def matchLine(self, note):
+    def matchWord(self, note):
         "abstract method for matching word to list"
         return
 
 
-    def checkList(self):
+    def setDict(self):
         "abstract method for checking valid dict files"
         return

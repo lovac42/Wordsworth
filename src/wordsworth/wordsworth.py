@@ -127,7 +127,7 @@ class Wordsworth():
 
         try:
             self.importer.setList(self.freq_file)
-            self.importer.checkList()
+            self.importer.setDict()
             self.btn_import.setText("Frequency List Loaded")
             self.valueChange()
 
@@ -135,10 +135,11 @@ class Wordsworth():
             self.btn_import.setText("Not the right format")
             self.btn_save.setEnabled(False)
             self.importer=None
-        except:
-            self.btn_import.setText("Error Reading File")
-            self.btn_save.setEnabled(False)
-            self.importer=None
+
+        # except:
+            # self.btn_import.setText("Error Reading File")
+            # self.btn_save.setEnabled(False)
+            # self.importer=None
 
 
     def onWrite(self):
@@ -151,6 +152,7 @@ class Wordsworth():
             try:
                 nids=self.browser.selectedNotes()
                 self.importer.process(nids)
+                showInfo("Process complete")
             except NoNoteError as err:
                 showInfo(str(err))
             except NoListError as err:
