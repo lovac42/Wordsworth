@@ -4,30 +4,26 @@
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 
 
+import re
 from aqt import mw
-import os, re
-from ..error import *
 from .batch import BatchProcessor
 
 
-class SpaceSeparatedImporter(BatchProcessor):
+class CSVImporter(BatchProcessor):
 
     def checkList(self):
         for line in self.freq_list:
-            if not line: continue #empty lines
-            if not re.match(r'(?:^[^\s]+\s+\d+$)|^\s+$',line):
+            if not re.match(r'^.+;.+$|^\s+$',line):
                 self.freq_list=None
                 raise TypeError
 
 
     def matchLine(self, note):
         for line in self.freq_list:
+            if not line: continue
             word=note[self.word_field]
-            if not word: continue
-            word=self.parse(word)
-
             if word and line.find(word) > -1:
-                wd,freq=line.split()
+                wd,freq=line.split(';')
                 if word==wd:
                     note[self.rank_field]=freq
                     note.flush()

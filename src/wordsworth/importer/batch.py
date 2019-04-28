@@ -9,7 +9,6 @@ from aqt import mw
 from aqt.utils import showInfo
 from codecs import open
 import os, re
-from ..const import *
 from ..error import *
 
 

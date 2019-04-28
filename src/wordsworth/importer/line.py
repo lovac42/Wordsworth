@@ -4,12 +4,8 @@
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 
 
-# from __future__ import unicode_literals
 from aqt import mw
-# from aqt.utils import getFile, showInfo
-# from codecs import open
-import os, re
-# from ..const import *
+import re
 from ..error import *
 from .batch import BatchProcessor
 
@@ -28,8 +24,6 @@ class LineNumberImporter(BatchProcessor):
         i=1
         for line in self.freq_list:
             word=note[self.word_field]
-            print "line=%s word=%s"%(line,word)
-
             if not word: return
             word=self.parse(word)
             if word==line:

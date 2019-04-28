@@ -73,7 +73,8 @@ class Wordsworth():
         r+=1
         lbl_help=QtWidgets.QLabel()
         lbl_help.setText(_("""<br><i>Exact matches only, 
-                           beware of hidden html tags.</i>"""))
+                           beware of hidden html tags.</i><br>
+                           <b>Make sure to backup first!</b>"""))
         gridLayout.addWidget(lbl_help,r,0,1,1)
 
 
@@ -144,7 +145,7 @@ class Wordsworth():
         if self.btn_save.isEnabled():
             wdf=self.wordField.currentText()
             rkf=self.rankField.currentText()
-            ow=self.cb_overWrite==2
+            ow=self.cb_overWrite.checkState()
             self.importer.setFields(wdf,rkf,ow)
 
             try:
