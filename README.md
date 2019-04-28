@@ -9,13 +9,17 @@ The idea is to rank these words from most frequent to least. Depending on your n
 ## Word lists:
 
 ### Line Count Word List (English):
-Must rename ```.txt``` to ```.line```  
-Unfortunely, this list seems to have alot of issue.  
+File extension must end with ```.line```  
+Format: ```{word}``` This is ranked by line number.  
+
+Unfortunately, this list seems to have alot of issue.  
 https://github.com/first20hours/google-10000-english  
+Rename your download from ```.txt``` to ```.line```  
 
 
 ### Frequency Count Word List (English):
 File extension must end with ```.txt```  
+Format: ```{word}{space or tab}{frequency count}```  
 
 This word list has 50k words, mostly from english subtitled movies. It might be good for ESL students, but highly inaccurate for advanced english.
 https://github.com/hermitdave/FrequencyWords/tree/master/content/2016/en
@@ -29,7 +33,7 @@ https://github.com/hermitdave/FrequencyWords/tree/master/content/2016/en
 
 
 ## Mentions:
-No relation to this addon, but this two addons available on ankiweb also includes their own database for chinese and japanese studies:
+No relation to this addon, but this two addons available on ankiweb also includes their own database for chinese and japanese studies:  
 https://ankiweb.net/shared/info/1612642956  
 https://ankiweb.net/shared/info/2129668097  
 
