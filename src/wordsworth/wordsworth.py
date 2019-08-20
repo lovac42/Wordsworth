@@ -14,10 +14,10 @@ from .importer import *
 from .const import *
 from .error import *
 
-if ANKI20:
-    from PyQt4 import QtCore, QtGui as QtWidgets
-else:
+if ANKI21:
     from PyQt5 import QtCore, QtGui, QtWidgets
+else:
+    from PyQt4 import QtCore, QtGui as QtWidgets
 
 
 class Wordsworth():
@@ -25,8 +25,13 @@ class Wordsworth():
 
     def __init__(self, browser):
         self.browser=browser
-        self.showDialog()
 
+        #Note in editor must be removed to update templates.
+        if ANKI20:
+            self.browser.editor.saveNow()
+            self.showDialog()
+        else:
+            self.browser.editor.saveNow(self.showDialog)
 
     def showDialog(self):
         fields=sorted(anki.find.fieldNames(mw.col,downcase=False))
@@ -39,6 +44,13 @@ class Wordsworth():
         self.btn_import=QPushButton('Import Word List')
         self.btn_import.clicked.connect(self.onImport)
         gridLayout.addWidget(self.btn_import,r,0,1,1)
+
+        # r+=1
+        self.cb_casesense=QtWidgets.QCheckBox()
+        # self.cb_casesense.setCheckState(2)
+        self.cb_casesense.clicked.connect(self._import)
+        self.cb_casesense.setText(_('Case Sen..'))
+        gridLayout.addWidget(self.cb_casesense, r, 1, 1, 1)
 
         r+=1
         fieldLayout=QtWidgets.QHBoxLayout()
@@ -66,7 +78,7 @@ class Wordsworth():
 
         r+=1
         self.cb_overWrite=QtWidgets.QCheckBox()
-        self.cb_overWrite.setCheckState(2)
+        # self.cb_overWrite.setCheckState(2)
         self.cb_overWrite.setText(_('Overwrite rank field if not empty?'))
         gridLayout.addWidget(self.cb_overWrite, r, 0, 1, 1)
 
@@ -117,17 +129,19 @@ class Wordsworth():
             self.browser, _("Choose File"), None,
             filter=filt, key="import"
         )
-
         if not self.freq_file:
             return
-
         self.importer=self.getImporter(self.freq_file)
+        self._import()
+
+
+    def _import(self):
         if not self.importer:
             return
-
+        cs=self.cb_casesense.checkState()
         try:
             self.importer.setList(self.freq_file)
-            self.importer.setDict()
+            self.importer.setDict(cs)
             self.btn_import.setText("Frequency List Loaded")
             self.valueChange()
 
@@ -147,8 +161,10 @@ class Wordsworth():
             wdf=self.wordField.currentText()
             rkf=self.rankField.currentText()
             ow=self.cb_overWrite.checkState()
-            self.importer.setFields(wdf,rkf,ow)
-
+            cs=self.cb_casesense.checkState()
+            self.importer.setFields(wdf,rkf)
+            self.importer.setProperties(ow,cs)
+            self.browser.editor.setNote(None)
             try:
                 nids=self.browser.selectedNotes()
                 self.importer.process(nids)

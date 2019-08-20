@@ -12,7 +12,7 @@ from .batch import BatchProcessor
 
 class LineNumberImporter(BatchProcessor):
 
-    def setDict(self):
+    def setDict(self, case_sensitive):
         self.dict={}
         i=1
         for line in self.freq_list:
@@ -21,6 +21,8 @@ class LineNumberImporter(BatchProcessor):
                 self.freq_list=None
                 raise TypeError
             else:
+                if not case_sensitive:
+                    line=line.lower()
                 self.dict[line]=str(i)
             i+=1
 
@@ -29,7 +31,11 @@ class LineNumberImporter(BatchProcessor):
         "space is allowed"
         try:
             wd=note[self.word_field]
-            note[self.rank_field]=self.dict[wd]
+            if not self.case_sensitive:
+                wd=wd.lower()
+            rank=self.dict[wd]
+            note[self.rank_field]=rank
             note.flush()
         except KeyError:
+            print("no %s in dict"%wd)
             return

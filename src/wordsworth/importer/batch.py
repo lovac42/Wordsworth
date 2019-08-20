@@ -18,11 +18,13 @@ class BatchProcessor:
 
     # def __init__(self):
 
-    def setFields(self, word_field, rank_field, overwrite):
+    def setFields(self, word_field, rank_field):
         self.word_field=word_field
         self.rank_field=rank_field
-        self.overwrite=overwrite
 
+    def setProperties(self, overwrite, case_sensitive):
+        self.overwrite=overwrite
+        self.case_sensitive=case_sensitive
 
     def setList(self, file):
         #file format: unix EOF & unicode
@@ -66,6 +68,6 @@ class BatchProcessor:
         return
 
 
-    def setDict(self):
+    def setDict(self, case_sensitive):
         "abstract method for checking valid dict files"
         return

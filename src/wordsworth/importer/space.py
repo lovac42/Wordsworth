@@ -12,7 +12,7 @@ from .batch import BatchProcessor
 
 class SpaceSeparatedImporter(BatchProcessor):
 
-    def setDict(self):
+    def setDict(self, case_sensitive):
         self.dict={}
         for line in self.freq_list:
             if not line: continue #empty lines
@@ -22,6 +22,8 @@ class SpaceSeparatedImporter(BatchProcessor):
             else:
                 try:
                     wd,freq=line.split()
+                    if not case_sensitive:
+                        wd=wd.lower()
                     self.dict[wd]=freq
                 except: #split errors
                     continue
@@ -30,7 +32,11 @@ class SpaceSeparatedImporter(BatchProcessor):
         "no space allowed"
         try:
             wd=self.parse(note[self.word_field])
-            note[self.rank_field]=self.dict[wd]
+            if not self.case_sensitive:
+                wd=wd.lower()
+            rank=self.dict[wd]
+            note[self.rank_field]=rank
             note.flush()
         except KeyError:
+            print("no %s in dict"%wd)
             return

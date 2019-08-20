@@ -11,7 +11,7 @@ from .batch import BatchProcessor
 
 class CSVImporter(BatchProcessor):
 
-    def setDict(self):
+    def setDict(self, case_sensitive):
         self.dict={}
         for line in self.freq_list:
             if not line: continue #empty lines
@@ -21,6 +21,8 @@ class CSVImporter(BatchProcessor):
             else:
                 try:
                     wd,freq=line.split(';')
+                    if not case_sensitive:
+                        wd=wd.lower()
                     self.dict[wd]=freq
                 except: #split errors
                     continue
@@ -30,8 +32,11 @@ class CSVImporter(BatchProcessor):
         "space is allowed"
         try:
             wd=note[self.word_field]
-            note[self.rank_field]=self.dict[wd]
+            if not self.case_sensitive:
+                wd=wd.lower()
+            rank=self.dict[wd]
+            note[self.rank_field]=rank
             note.flush()
         except KeyError:
+            print("no %s in dict"%wd)
             return
-
