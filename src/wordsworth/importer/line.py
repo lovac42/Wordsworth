@@ -6,36 +6,19 @@
 
 from aqt import mw
 import re
-from ..error import *
 from .batch import BatchProcessor
 
 
 class LineNumberImporter(BatchProcessor):
+    re_validate=re.compile(r'^[^\s]+$')
 
-    def setDict(self, case_sensitive):
-        self.dict={}
+    def parseList(self):
         i=1
+        self.dict={}
+        self.startTime=0
         for line in self.freq_list:
-            if not line: continue #empty lines
-            if not re.match(r'^[^\s]+$',line):
-                self.freq_list=None
-                raise TypeError
-            else:
-                if not case_sensitive:
-                    line=line.lower()
-                self.dict[line]=str(i)
-            i+=1
-
-
-    def matchWord(self, note):
-        "space is allowed"
-        try:
-            wd=note[self.word_field]
-            if not self.case_sensitive:
-                wd=wd.lower()
-            rank=self.dict[wd]
-            note[self.rank_field]=rank
-            note.flush()
-        except KeyError:
-            print("no %s in dict"%wd)
-            return
+            if line:
+                self.updatePTimer(line)
+                wd=self.cleanWord(line)
+                self.dict[wd]=str(i)
+                i+=1

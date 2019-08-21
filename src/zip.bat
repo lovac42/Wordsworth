@@ -17,3 +17,11 @@ cd %REPO%
 %ZIP% ../%REPO%_v%VERSION%_Anki21.ankiaddon *
 
 %ZIP% ../%REPO%_v%VERSION%_CCBC.adze *
+
+
+
+echo.
+echo.
+echo Reminder: Enable unicode_literals in import.batch.py for Anki 2.0
+echo.
+pause

@@ -4,17 +4,29 @@
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 
 
-from __future__ import unicode_literals
+# enable for anki 2.0 if needed
+# from __future__ import unicode_literals
+
+import os, re
+import time
 from aqt import mw
 from aqt.utils import showInfo
+from anki.lang import _
 from codecs import open
-import os, re
+from ..clean import Cleaner
 from ..error import *
 
 
+RE_NOSPACE=re.compile(r'\s')
+
+
 class BatchProcessor:
+    htmlCleaner=Cleaner()
+    re_validate=re.compile(r'.*')
     freq_list=None
     dict=None
+    startTime=0
+    count=0
 
     # def __init__(self):
 
@@ -22,9 +34,11 @@ class BatchProcessor:
         self.word_field=word_field
         self.rank_field=rank_field
 
-    def setProperties(self, overwrite, case_sensitive):
+    def setProperties(self, overwrite, case_sensitive, no_space, no_html):
         self.overwrite=overwrite
         self.case_sensitive=case_sensitive
+        self.no_space=no_space
+        self.no_html=no_html
 
     def setList(self, file):
         #file format: unix EOF & unicode
@@ -39,11 +53,15 @@ class BatchProcessor:
             raise NoNoteError
         if not self.freq_list:
             raise NoListError
+
+        self.parseList()
+
         mw.checkpoint("Wordsworth")
-        self.processNotes(nids)
+        return self.processNotes(nids)
 
 
     def processNotes(self, nids):
+        self.startTime=0
         for nid in nids:
             note=mw.col.getNote(nid)
 
@@ -58,16 +76,51 @@ class BatchProcessor:
             self.matchWord(note)
 
 
-    def parse(self, wd):
-        return wd.replace(" ", "")
-        #TODO: add option to strip html
+    def checkList(self):
+        "method for validating word lists"
+        line_num=1
+        for line_txt in self.freq_list:
+            if line_txt and not self.re_validate.match(line_txt):
+                self.freq_list=None
+                raise InvalidFormatError(line_num,line_txt)
+            line_num+=1
 
 
     def matchWord(self, note):
-        "abstract method for matching word to list"
-        return
+        "match word to list"
+        try:
+            wd=note[self.word_field]
+            wd=self.cleanWord(wd)
+            rank=self.dict[wd]
+            note[self.rank_field]=rank
+            note.flush()
+            self.count+=1
+            self.updatePTimer(wd)
+        except KeyError:
+            print("ww: no %s in dict"%wd)
 
 
-    def setDict(self, case_sensitive):
-        "abstract method for checking valid dict files"
+    def cleanWord(self, wd):
+        if not self.case_sensitive:
+            wd=wd.lower()
+
+        if self.no_html:
+            self.htmlCleaner.reset()
+            self.htmlCleaner.feed(wd)
+            wd=self.htmlCleaner.toString()
+
+        if self.no_space: #space between words
+            return RE_NOSPACE.sub("",wd)
+        return wd.strip() #leading & trailing space
+
+
+    def updatePTimer(self, labelText):
+        now = time.time()
+        if now-self.startTime >= 0.5:
+            self.startTime=now
+            mw.progress.update(_("%s"%labelText))
+
+
+    def parseList(self):
+        "abstract method for parsing word lists"
         return

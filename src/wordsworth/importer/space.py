@@ -6,37 +6,23 @@
 
 from aqt import mw
 import os, re
-from ..error import *
 from .batch import BatchProcessor
 
 
 class SpaceSeparatedImporter(BatchProcessor):
+    re_validate=re.compile(r'(?:^[^\s]+\s+\d+$)')
 
-    def setDict(self, case_sensitive):
+    def parseList(self):
         self.dict={}
+        self.startTime=0
         for line in self.freq_list:
-            if not line: continue #empty lines
-            if not re.match(r'(?:^[^\s]+\s+\d+$)',line):
-                self.freq_list=None
-                raise TypeError
-            else:
+            if line:
+                self.updatePTimer(line)
                 try:
                     wd,freq=line.split()
-                    if not case_sensitive:
-                        wd=wd.lower()
-                    self.dict[wd]=freq
                 except: #split errors
+                    print("ww: dict split error, %s"%line)
                     continue
-
-    def matchWord(self, note):
-        "no space allowed"
-        try:
-            wd=self.parse(note[self.word_field])
-            if not self.case_sensitive:
-                wd=wd.lower()
-            rank=self.dict[wd]
-            note[self.rank_field]=rank
-            note.flush()
-        except KeyError:
-            print("no %s in dict"%wd)
-            return
+                wd=self.cleanWord(wd)
+                self.dict[wd]=freq
+        self.no_space=True

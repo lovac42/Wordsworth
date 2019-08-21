@@ -10,33 +10,18 @@ from .batch import BatchProcessor
 
 
 class CSVImporter(BatchProcessor):
+    re_validate=re.compile(r'^.+;.+$')
 
-    def setDict(self, case_sensitive):
+    def parseList(self):
         self.dict={}
+        self.startTime=0
         for line in self.freq_list:
-            if not line: continue #empty lines
-            if not re.match(r'^.+;.+$',line):
-                self.freq_list=None
-                raise TypeError
-            else:
+            if line:
+                self.updatePTimer(line)
                 try:
                     wd,freq=line.split(';')
-                    if not case_sensitive:
-                        wd=wd.lower()
+                    wd=self.cleanWord(wd)
                     self.dict[wd]=freq
                 except: #split errors
+                    print("ww: dict split error, %s"%line)
                     continue
-
-
-    def matchWord(self, note):
-        "space is allowed"
-        try:
-            wd=note[self.word_field]
-            if not self.case_sensitive:
-                wd=wd.lower()
-            rank=self.dict[wd]
-            note[self.rank_field]=rank
-            note.flush()
-        except KeyError:
-            print("no %s in dict"%wd)
-            return

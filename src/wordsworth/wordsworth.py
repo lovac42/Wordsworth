@@ -5,11 +5,12 @@
 
 
 import re
-import anki.find
 from aqt import mw
 from aqt.qt import *
 from aqt.utils import getFile, showInfo
 from anki.lang import _
+
+from .utils import fieldNamesForNotes
 from .importer import *
 from .const import *
 from .error import *
@@ -26,15 +27,36 @@ class Wordsworth():
     def __init__(self, browser):
         self.browser=browser
 
+        #Must have some notes selected in browser
+        try:
+            self.setNotes()
+        except NoNoteError as err:
+            showInfo(str(err))
+            return
+
         #Note in editor must be removed to update templates.
-        if ANKI20:
+        if CCBC or ANKI20:
             self.browser.editor.saveNow()
-            self.showDialog()
+            self.hideEditor()
         else:
-            self.browser.editor.saveNow(self.showDialog)
+            self.browser.editor.saveNow(self.hideEditor)
+
+        self.showDialog()
+
+
+    def setNotes(self):
+        self.notes=self.browser.selectedNotes()
+        if not self.notes:
+            raise NoNoteError
+
+
+    def hideEditor(self):
+        self.browser.editor.setNote(None)
+        self.browser.singleCard=False
+
 
     def showDialog(self):
-        fields=sorted(anki.find.fieldNames(mw.col,downcase=False))
+        fields=fieldNamesForNotes(self.notes)
 
         r=0
         gridLayout=QtWidgets.QGridLayout()
@@ -45,9 +67,7 @@ class Wordsworth():
         self.btn_import.clicked.connect(self.onImport)
         gridLayout.addWidget(self.btn_import,r,0,1,1)
 
-        # r+=1
         self.cb_casesense=QtWidgets.QCheckBox()
-        # self.cb_casesense.setCheckState(2)
         self.cb_casesense.clicked.connect(self._import)
         self.cb_casesense.setText(_('Case Sen..'))
         gridLayout.addWidget(self.cb_casesense, r, 1, 1, 1)
@@ -64,6 +84,11 @@ class Wordsworth():
         fieldLayout.addWidget(self.wordField)
         gridLayout.addLayout(fieldLayout,r,0, 1, 1)
 
+        self.cb_rm_html=QtWidgets.QCheckBox()
+        self.cb_rm_html.clicked.connect(self._import)
+        self.cb_rm_html.setText(_('Strip HTML'))
+        gridLayout.addWidget(self.cb_rm_html, r, 1, 1, 1)
+
         r+=1
         fieldLayout=QtWidgets.QHBoxLayout()
         label=QtWidgets.QLabel("Rank Field (WRITE):")
@@ -75,6 +100,11 @@ class Wordsworth():
         self.rankField.currentIndexChanged.connect(self.valueChange)
         fieldLayout.addWidget(self.rankField)
         gridLayout.addLayout(fieldLayout,r,0, 1, 1)
+
+        self.cb_rm_space=QtWidgets.QCheckBox()
+        self.cb_rm_space.clicked.connect(self._import)
+        self.cb_rm_space.setText(_('Strip Space'))
+        gridLayout.addWidget(self.cb_rm_space, r, 1, 1, 1)
 
         r+=1
         self.cb_overWrite=QtWidgets.QCheckBox()
@@ -138,17 +168,17 @@ class Wordsworth():
     def _import(self):
         if not self.importer:
             return
-        cs=self.cb_casesense.checkState()
         try:
             self.importer.setList(self.freq_file)
-            self.importer.setDict(cs)
+            self.importer.checkList()
             self.btn_import.setText("Frequency List Loaded")
             self.valueChange()
 
-        except TypeError:
+        except InvalidFormatError as e:
             self.btn_import.setText("Not the right format")
             self.btn_save.setEnabled(False)
             self.importer=None
+            showInfo(e.message)
 
         # except:
             # self.btn_import.setText("Error Reading File")
@@ -158,18 +188,24 @@ class Wordsworth():
 
     def onWrite(self):
         if self.btn_save.isEnabled():
+            mw.progress.start(immediate=True)
+            mw.progress.update(_("Processing Dictionary..."))
+
             wdf=self.wordField.currentText()
             rkf=self.rankField.currentText()
             ow=self.cb_overWrite.checkState()
             cs=self.cb_casesense.checkState()
+            sp=self.cb_rm_space.checkState()
+            htm=self.cb_rm_html.checkState()
+
             self.importer.setFields(wdf,rkf)
-            self.importer.setProperties(ow,cs)
-            self.browser.editor.setNote(None)
+            self.importer.setProperties(ow,cs,sp,htm)
             try:
-                nids=self.browser.selectedNotes()
-                self.importer.process(nids)
-                showInfo("Process complete")
-            except NoNoteError as err:
-                showInfo(str(err))
+                self.importer.process(self.notes)
+                tot=len(self.notes)
+                cnt=self.importer.count
+                showInfo("Process complete (%d/%d)"%(cnt,tot))
             except NoListError as err:
                 showInfo(str(err))
+            finally:
+                mw.progress.finish()
