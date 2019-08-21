@@ -1,7 +1,7 @@
 @echo off
 set ZIP=C:\PROGRA~1\7-Zip\7z.exe a -tzip -y -r
 set REPO=wordsworth
-set VERSION=0.0.4
+set VERSION=0.0.5
 
 
 fsum -r -jm -md5 -d%REPO% * > checksum.md5
@@ -18,10 +18,3 @@ cd %REPO%
 
 %ZIP% ../%REPO%_v%VERSION%_CCBC.adze *
 
-
-
-echo.
-echo.
-echo Reminder: Enable unicode_literals in import.batch.py for Anki 2.0
-echo.
-pause
