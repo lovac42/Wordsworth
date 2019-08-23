@@ -1,5 +1,6 @@
-# Wordsworth: Word Frequency Ranker
+## Wordsworth: Word Frequency Ranker
 
+https://ankiweb.net/shared/info/696663192
 
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/title.png?raw=true">  
 
@@ -9,7 +10,7 @@ The idea is to rank these words from most frequent to least. Depending on your n
 This addon is intended to work with any language and you will need to supply your own list which can be found on the internet in various formats. No actual wordlist is included, a sample list of 500 english words are included in the ```user_files``` folder for testing.
 
 
-## Technicals Warning:
+## Technical:
 Warning: list is loaded into ram first, 10mb file is about 300mb in ram.  
 
 ## Screenshots:

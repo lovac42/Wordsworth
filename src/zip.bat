@@ -7,7 +7,7 @@ set VERSION=0.0.5
 fsum -r -jm -md5 -d%REPO% * > checksum.md5
 move checksum.md5 %REPO%/checksum.md5
 
-quick_manifest.exe "Wordsworth: Word Frequency Ranker" "%REPO%" >%REPO%/manifest.json
+quick_manifest.exe "Wordsworth: Word Frequency Ranker" "696663192" >%REPO%/manifest.json
 
 echo %VERSION% >%REPO%/VERSION
 
