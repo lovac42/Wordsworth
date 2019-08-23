@@ -1,33 +1,16 @@
 # Wordsworth: Word Frequency Ranker
 
+
+<img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/title.png?raw=true">  
+
 ## About:
-No wordlist is included in this addon. It is intended to work with any language and you will need to supply your own list which can be found on the internet in various formats.
+The idea is to rank these words from most frequent to least. Depending on your needs, you would study the most frequent one's first, or separate them into multiple decks and use large interval modifiers to skim over the easy ones. In addition, it can be used to seed MorphMan.
 
-The idea is to rank these words from most frequent to least. Depending on your needs, you would study the most frequent one's first, or separate them into multiple decks and use large interval modifiers to skim over the easy ones.
+This addon is intended to work with any language and you will need to supply your own list which can be found on the internet in various formats. No actual wordlist is included, a sample list of 500 english words are included in the ```user_files``` folder for testing.
 
 
-## Technicals:
+## Technicals Warning:
 Warning: list is loaded into ram first, 10mb file is about 300mb in ram.  
-
-
-## Word lists:
-
-### Line Count Word List (English):
-File extension must end with ```.line```  
-Format: ```{word}``` This is ranked by line number.  
-
-Unfortunately, this list seems to have alot of issues.  
-https://github.com/first20hours/google-10000-english  
-Rename your download from ```.txt``` to ```.line```  
-
-
-### Frequency Count Word List (English):
-File extension must end with ```.txt```  
-Format: ```{word}{space or tab}{frequency count}```  
-
-This word list has 50k words, mostly from english subtitled movies. It might be good for ESL students, but highly inaccurate for advanced english.
-https://github.com/hermitdave/FrequencyWords/tree/master/content/2016/en
-
 
 ## Screenshots:
 
@@ -36,11 +19,37 @@ https://github.com/hermitdave/FrequencyWords/tree/master/content/2016/en
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/result.png?raw=true">  
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/result2.png?raw=true">  
 
+
+## Word lists:
+
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/format.png?raw=true">  
 
+### Line Count Word List (English):
+File extension must end with ```.line```  
+Format: ```{word}``` This is ranked by line number.  
 
-## Mentions:
-No relation to this addon, but this two addons available on ankiweb also includes their own database for chinese and japanese studies:  
-https://ankiweb.net/shared/info/1612642956  
-https://ankiweb.net/shared/info/2129668097  
+
+Google - 10K words:  
+https://github.com/first20hours/google-10000-english  
+Unfortunately, this list seems to have alot of issues.  
+Rename your download from ```.txt``` to ```.line```  
+
+
+Words from nursing journals - 1K words:  
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6298166/  
+This list is in .tif, so you need an OCR program to translate it to text first.
+
+
+### Frequency Count Word List (English):
+File extension must end with ```.txt```  
+Format: ```{word}{space or tab}{frequency count}```  
+
+
+Vocabulary for students of English - 15K words:  
+http://www.audiencedialogue.net/susteng.html  
+You will need to remove a few of the lines to comply with the word-space-frequency format here.
+
+Word list from movie subtitles - 50K words:  
+https://github.com/hermitdave/FrequencyWords/tree/master/content/2016/en  
+This word list has 50k words, mostly from english subtitled movies. It might be good for ESL students, but highly inaccurate for advanced english.
 
