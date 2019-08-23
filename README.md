@@ -2,7 +2,7 @@
 
 https://ankiweb.net/shared/info/696663192
 
-<img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/title.png?raw=true">  
+<img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/title.jpg?raw=true">  
 
 ## About:
 The idea is to rank these words from most frequent to least. Depending on your needs, you would study the most frequent one's first, or separate them into multiple decks and use large interval modifiers to skim over the easy ones. In addition, it can be used to seed MorphMan.
