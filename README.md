@@ -50,7 +50,14 @@ Vocabulary for students of English - 15K words:
 http://www.audiencedialogue.net/susteng.html  
 You will need to remove a few of the lines to comply with the word-space-frequency format here.
 
-Word list from movie subtitles - 50K words:  
-https://github.com/hermitdave/FrequencyWords/tree/master/content/2016/en  
-This word list has 50k words, mostly from english subtitled movies. It might be good for ESL students, but highly inaccurate for advanced english.
+Word list from movie subtitles - 1.65M words 20MB:  
+https://github.com/hermitdave/FrequencyWords/tree/master/content/2018/en  
+This word list has 1.65M words, mostly from english subtitled movies. It might be good for ESL students, but highly inaccurate for advanced english.
+
+dog : 125,769  
+cat : 51,175  
+```dog > cat```  
+
+
+
 
