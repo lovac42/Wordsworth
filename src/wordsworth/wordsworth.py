@@ -159,10 +159,9 @@ class Wordsworth():
             self.browser, _("Choose File"), None,
             filter=filt, key="import"
         )
-        if not self.freq_file:
-            return
-        self.importer=self.getImporter(self.freq_file)
-        self._import()
+        if self.freq_file:
+            self.importer=self.getImporter(self.freq_file)
+            self._import()
 
 
     def _import(self):
@@ -171,7 +170,8 @@ class Wordsworth():
         try:
             self.importer.setList(self.freq_file)
             self.importer.checkList()
-            self.btn_import.setText("Frequency List Loaded")
+            name=self.freq_file.split("/")[-1]
+            self.btn_import.setText("Loaded: "+name)
             self.valueChange()
 
         except InvalidFormatError as e:
