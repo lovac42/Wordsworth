@@ -9,15 +9,22 @@ The idea is to rank these words from most frequent to least. Depending on your n
 
 This addon is intended to work with any language and you will need to supply your own list which can be found on the internet in various formats. No actual wordlist is included, a sample list of 500 english words are included in the ```user_files``` folder for testing.
 
+Some word lists can be downloaded here:
+https://www.dropbox.com/sh/cbkrotcwpqrks60/AAB2y42FR-37XM4V5oQeMH7La?dl=0  
+
 
 ## Technical:
-Warning: list is loaded into ram first, 10mb file is about 300mb in ram.  
+Warning: Word list is loaded into ram first, 10mb file is about 200-300mb in ram.  So the current version is not meant for low memory devices. But given that a 20mb word list + Anki is around 400-500mb of ram usage, and that you are not likely to have a list more than 25mb, this isn't much of a concern.
+
 
 ## Screenshots:
 
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/menuitem.png?raw=true">  
+
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/wordsworth.png?raw=true">  
+
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/result.png?raw=true">  
+
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/result2.png?raw=true">  
 
 
@@ -45,11 +52,6 @@ This list is in .tif, so you need an OCR program to translate it to text first.
 File extension must end with ```.txt```  
 Format: ```{word}{space or tab}{frequency count}```  
 
-
-Vocabulary for students of English - 15K words:  
-http://www.audiencedialogue.net/susteng.html  
-You will need to remove a few of the lines to comply with the word-space-frequency format here.
-
 Word list from movie subtitles - 1.65M words 20MB:  
 https://github.com/hermitdave/FrequencyWords/tree/master/content/2018/en  
 This word list has 1.65M words, mostly from english subtitled movies. It might be good for ESL students, but highly inaccurate for advanced english.
@@ -57,7 +59,4 @@ This word list has 1.65M words, mostly from english subtitled movies. It might b
 dog : 125,769  
 cat : 51,175  
 ```dog > cat```  
-
-
-
 
