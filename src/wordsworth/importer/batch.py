@@ -26,7 +26,7 @@ class BatchProcessor:
     freq_list=None
     dict=None
     startTime=0
-    count=0
+    stat={}
 
     # def __init__(self):
 
@@ -54,8 +54,14 @@ class BatchProcessor:
         if not self.freq_list:
             raise NoListError
 
+        self.stat={
+            "written":0,
+            "skipped":0,
+            "overwritten":0,
+            "notfound":0,
+            "nofield":0,
+        }
         self.parseList()
-
         mw.checkpoint("Wordsworth")
         return self.processNotes(nids)
 
@@ -64,15 +70,11 @@ class BatchProcessor:
         self.startTime=0
         for nid in nids:
             note=mw.col.getNote(nid)
-
             if self.word_field not in note or \
                self.rank_field not in note or \
                not note[self.word_field]:
+                self.stat["nofield"]+=1
                 continue
-
-            if note[self.rank_field] and not self.overwrite:
-                continue
-
             self.matchWord(note)
 
 
@@ -92,11 +94,17 @@ class BatchProcessor:
             wd=note[self.word_field]
             wd=self.cleanWord(wd)
             rank=self.dict[wd]
+            if note[self.rank_field]:
+                if not self.overwrite:
+                    self.stat["skipped"]+=1
+                    return
+                self.stat["overwritten"]+=1
             note[self.rank_field]=rank
             note.flush()
-            self.count+=1
+            self.stat["written"]+=1
             self.updatePTimer(wd)
         except KeyError:
+            self.stat["notfound"]+=1
             print("ww: no %s in dict"%wd)
 
 

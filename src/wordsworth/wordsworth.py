@@ -70,6 +70,7 @@ class Wordsworth():
         self.cb_casesense=QtWidgets.QCheckBox()
         self.cb_casesense.clicked.connect(self._import)
         self.cb_casesense.setText(_('Case Sen..'))
+        self.cb_casesense.setToolTip(_('Case Sensitive Match'))
         gridLayout.addWidget(self.cb_casesense, r, 1, 1, 1)
 
         r+=1
@@ -86,7 +87,8 @@ class Wordsworth():
 
         self.cb_rm_html=QtWidgets.QCheckBox()
         self.cb_rm_html.clicked.connect(self._import)
-        self.cb_rm_html.setText(_('Strip HTML'))
+        self.cb_rm_html.setText(_('No HTML'))
+        self.cb_rm_html.setToolTip(_('Strip HTML during search'))
         gridLayout.addWidget(self.cb_rm_html, r, 1, 1, 1)
 
         r+=1
@@ -103,7 +105,8 @@ class Wordsworth():
 
         self.cb_rm_space=QtWidgets.QCheckBox()
         self.cb_rm_space.clicked.connect(self._import)
-        self.cb_rm_space.setText(_('Strip Space'))
+        self.cb_rm_space.setText(_('No Space'))
+        self.cb_rm_space.setToolTip(_('Strip Space during search'))
         gridLayout.addWidget(self.cb_rm_space, r, 1, 1, 1)
 
         r+=1
@@ -202,10 +205,29 @@ class Wordsworth():
             self.importer.setProperties(ow,cs,sp,htm)
             try:
                 self.importer.process(self.notes)
-                tot=len(self.notes)
-                cnt=self.importer.count
-                showInfo("Process complete (%d/%d)"%(cnt,tot))
+                self.showStats()
             except NoListError as err:
                 showInfo(str(err))
             finally:
                 mw.progress.finish()
+
+
+    def showStats(self):
+        tot=len(self.notes)
+        w=self.importer.stat["written"]
+        s=self.importer.stat["skipped"]
+        ow=self.importer.stat["overwritten"]
+        nf=self.importer.stat["notfound"]
+        e=self.importer.stat["nofield"]
+        showInfo("""Process completed!
+
+SUMMARY:\t\t\t( %d / %d )
+\tTotal Notes:\t\t%d
+\tMatches:\t\t%d
+\tWritten:\t\t%d
+\tOverwritten:\t\t%d
+\tNot overwr.:\t\t%d
+\tNot in dict:\t\t%d
+\tNo FieldName:\t\t%d
+\tSkipped:\t\t%d
+"""%(w,tot,tot,w+s,w,ow,s,nf,e,e+s+nf))
