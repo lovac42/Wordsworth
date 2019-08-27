@@ -12,13 +12,15 @@ from .batch import BatchProcessor
 class LineNumberImporter(BatchProcessor):
     re_validate=re.compile(r'^[^\s]+$')
 
-    def parseList(self):
+    def parseList(self, offset):
         i=1
         self.dict={}
         self.startTime=0
-        for line in self.freq_list:
+        for line in self.freq_list[offset:offset+20000]:
+            offset+=1
             if line:
                 self.updatePTimer(line)
                 wd=self.cleanWord(line)
                 self.dict[wd]=str(i)
                 i+=1
+        return offset

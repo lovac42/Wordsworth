@@ -47,6 +47,14 @@ class BatchProcessor:
                 data=f.read()
             self.freq_list=re.split(r'\r?\n',data)
 
+    def checkList(self):
+        "method for validating word lists"
+        line_num=1
+        for line_txt in self.freq_list:
+            if line_txt and not self.re_validate.match(line_txt):
+                self.freq_list=None
+                raise InvalidFormatError(line_num,line_txt)
+            line_num+=1
 
     def process(self, nids):
         if not nids:
@@ -61,9 +69,21 @@ class BatchProcessor:
             "notfound":0,
             "nofield":0,
         }
-        self.parseList()
-        mw.checkpoint("Wordsworth")
-        return self.processNotes(nids)
+
+        #split dict and parse each piece
+        more=split=0
+        LEN=len(self.freq_list)
+        while more<LEN:
+            more=self.parseList(more)
+            mw.checkpoint("Wordsworth")
+            self.processNotes(nids)
+            split+=1
+
+        self.dict=None
+        #Adjust stat count based on number of splits
+        self.stat["nofield"]//=split
+        matched=self.stat["written"]+self.stat["skipped"]
+        self.stat["notfound"]=len(nids)-matched-self.stat["nofield"]
 
 
     def processNotes(self, nids):
@@ -76,16 +96,6 @@ class BatchProcessor:
                 self.stat["nofield"]+=1
                 continue
             self.matchWord(note)
-
-
-    def checkList(self):
-        "method for validating word lists"
-        line_num=1
-        for line_txt in self.freq_list:
-            if line_txt and not self.re_validate.match(line_txt):
-                self.freq_list=None
-                raise InvalidFormatError(line_num,line_txt)
-            line_num+=1
 
 
     def matchWord(self, note):
@@ -105,7 +115,7 @@ class BatchProcessor:
             self.updatePTimer(wd)
         except KeyError:
             self.stat["notfound"]+=1
-            print("ww: no %s in dict"%wd)
+            # print("ww: no %s in dict"%wd)
 
 
     def cleanWord(self, wd):
@@ -129,6 +139,6 @@ class BatchProcessor:
             mw.progress.update(_("%s"%labelText))
 
 
-    def parseList(self):
+    def parseList(self, offset):
         "abstract method for parsing word lists"
         return

@@ -205,11 +205,11 @@ class Wordsworth():
             self.importer.setProperties(ow,cs,sp,htm)
             try:
                 self.importer.process(self.notes)
-                self.showStats()
             except NoListError as err:
                 showInfo(str(err))
             finally:
                 mw.progress.finish()
+            self.showStats()
 
 
     def showStats(self):
