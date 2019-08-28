@@ -21,6 +21,7 @@ class LineNumberImporter(BatchProcessor):
             if line:
                 self.updatePTimer(line)
                 wd=self.cleanWord(line)
+                wd=self.normalize(wd,type=2)
                 if not self.dict.get(wd):
                     self.dict[wd]=str(i)
                 i+=1

@@ -68,7 +68,6 @@ class Wordsworth():
         gridLayout.addWidget(self.btn_import,r,0,1,1)
 
         self.cb_casesense=QtWidgets.QCheckBox()
-        self.cb_casesense.clicked.connect(self._import)
         self.cb_casesense.setText(_('Case Sen..'))
         self.cb_casesense.setToolTip(_('Case Sensitive Match'))
         gridLayout.addWidget(self.cb_casesense, r, 1, 1, 1)
@@ -86,7 +85,6 @@ class Wordsworth():
         gridLayout.addLayout(fieldLayout,r,0, 1, 1)
 
         self.cb_rm_html=QtWidgets.QCheckBox()
-        self.cb_rm_html.clicked.connect(self._import)
         self.cb_rm_html.setText(_('No HTML'))
         self.cb_rm_html.setToolTip(_('Strip HTML during search'))
         gridLayout.addWidget(self.cb_rm_html, r, 1, 1, 1)
@@ -104,22 +102,21 @@ class Wordsworth():
         gridLayout.addLayout(fieldLayout,r,0, 1, 1)
 
         self.cb_rm_space=QtWidgets.QCheckBox()
-        self.cb_rm_space.clicked.connect(self._import)
         self.cb_rm_space.setText(_('No Space'))
         self.cb_rm_space.setToolTip(_('Strip space during search'))
         gridLayout.addWidget(self.cb_rm_space, r, 1, 1, 1)
 
         r+=1
         self.cb_overWrite=QtWidgets.QCheckBox()
-        # self.cb_overWrite.setCheckState(2)
         self.cb_overWrite.setText(_('Overwrite rank field if not empty?'))
         self.cb_overWrite.setToolTip(_('Do you seriously need a tooltip for this?'))
         gridLayout.addWidget(self.cb_overWrite, r, 0, 1, 1)
 
         r+=1
         self.cb_normalize=QtWidgets.QCheckBox()
-        self.cb_normalize.clicked.connect(self._import)
-        self.cb_normalize.setText(_('Apply English stemmer to word field? (GIYF)'))
+        self.cb_normalize.setTristate(True)
+        self.cb_normalize.clicked.connect(self._stemmer)
+        self.cb_normalize.setText(_('Apply English stemmer? (GIYF)'))
         self.cb_normalize.setToolTip(_('Strips suffix -s, -ed, -es, -ing, -tion, -sion, ...'))
         gridLayout.addWidget(self.cb_normalize, r, 0, 1, 1)
 
@@ -194,6 +191,17 @@ class Wordsworth():
             # self.btn_import.setText("Error Reading File")
             # self.btn_save.setEnabled(False)
             # self.importer=None
+
+
+    def _stemmer(self):
+        checked=self.cb_normalize.checkState()
+        if checked==2:
+            msg='Apply to both word list and word field'
+        elif checked==1:
+            msg='Apply to word field only'
+        else:
+            msg='Apply English stemmer? (GIYF)'
+        self.cb_normalize.setText(_(msg))
 
 
     def onWrite(self):

@@ -112,7 +112,7 @@ class BatchProcessor:
         try:
             wd=note[self.word_field]
             wd=self.cleanWord(wd)
-            wd=self.normalize(wd)
+            wd=self.normalize(wd,type=1)
             rank=self.dict[wd]
             if note[self.rank_field]:
                 if not self.overwrite:
@@ -144,9 +144,9 @@ class BatchProcessor:
         return wd.strip() #leading & trailing space
 
 
-    def normalize(self, wd):
+    def normalize(self, wd, type):
         #TODO: extend to other languages
-        if self.op_normalize:
+        if self.op_normalize>=type:
             return self.stemmer.stem(wd)
         return wd
 

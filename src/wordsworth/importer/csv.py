@@ -22,6 +22,7 @@ class CSVImporter(BatchProcessor):
                 try:
                     wd,freq=line.split(';')
                     wd=self.cleanWord(wd)
+                    wd=self.normalize(wd,type=2)
                     if not self.dict.get(wd):
                         self.dict[wd]=freq
                 except: #split errors
