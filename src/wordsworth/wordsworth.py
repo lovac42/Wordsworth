@@ -158,12 +158,13 @@ class Wordsworth():
 
     def onImport(self):
         filt = ";;".join([x[0] for x in Importers])
-        self.freq_file=getFile(
+        file=getFile(
             self.browser, _("Choose File"), None,
             filter=filt, key="import"
         )
-        if self.freq_file:
-            self.importer=self.getImporter(self.freq_file)
+        if file:
+            self.freq_file=file
+            self.importer=self.getImporter(file)
             self._import()
 
 
