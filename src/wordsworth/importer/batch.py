@@ -113,7 +113,7 @@ class BatchProcessor:
             if note[self.rank_field]:
                 if not self.overwrite:
                     self.stat["skipped"]+=1
-                    return
+                    return True
                 self.stat["overwritten"]+=1
             note[self.rank_field]=rank
             note.flush()
