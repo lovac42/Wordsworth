@@ -196,9 +196,9 @@ class Wordsworth():
     def _stemmer(self):
         checked=self.cb_normalize.checkState()
         if checked==2:
-            msg='Apply to both word list and word field'
+            msg='Stemmer: apply to both word list and word field'
         elif checked==1:
-            msg='Apply to word field only'
+            msg='Stemmer: apply to word field only'
         else:
             msg='Apply English stemmer? (GIYF)'
         self.cb_normalize.setText(_(msg))
