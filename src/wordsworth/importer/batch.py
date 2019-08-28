@@ -15,6 +15,7 @@ from anki.lang import _
 from codecs import open
 from ..clean import Cleaner
 from ..error import *
+from ..lib.porter2stemmer import Porter2Stemmer
 
 
 RE_NOSPACE=re.compile(r'\s')
@@ -22,6 +23,7 @@ RE_NOSPACE=re.compile(r'\s')
 
 class BatchProcessor:
     htmlCleaner=Cleaner()
+    stemmer=Porter2Stemmer()
     re_validate=re.compile(r'.*')
     freq_list=None
     dict=None
@@ -34,11 +36,12 @@ class BatchProcessor:
         self.word_field=word_field
         self.rank_field=rank_field
 
-    def setProperties(self, overwrite, case_sensitive, no_space, no_html):
+    def setProperties(self, overwrite, case_sensitive, no_space, no_html, norm):
         self.overwrite=overwrite
         self.case_sensitive=case_sensitive
         self.no_space=no_space
         self.no_html=no_html
+        self.op_normalize=norm
 
     def setList(self, file):
         #file format: unix EOF & unicode
@@ -109,6 +112,7 @@ class BatchProcessor:
         try:
             wd=note[self.word_field]
             wd=self.cleanWord(wd)
+            wd=self.normalize(wd)
             rank=self.dict[wd]
             if note[self.rank_field]:
                 if not self.overwrite:
@@ -138,6 +142,13 @@ class BatchProcessor:
         if self.no_space: #space between words
             return RE_NOSPACE.sub("",wd)
         return wd.strip() #leading & trailing space
+
+
+    def normalize(self, wd):
+        #TODO: extend to other languages
+        if self.op_normalize:
+            return self.stemmer.stem(wd)
+        return wd
 
 
     def updatePTimer(self, labelText):

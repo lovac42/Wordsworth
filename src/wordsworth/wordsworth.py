@@ -113,7 +113,15 @@ class Wordsworth():
         self.cb_overWrite=QtWidgets.QCheckBox()
         # self.cb_overWrite.setCheckState(2)
         self.cb_overWrite.setText(_('Overwrite rank field if not empty?'))
+        self.cb_overWrite.setToolTip(_('Do you seriously need a tooltip for this?'))
         gridLayout.addWidget(self.cb_overWrite, r, 0, 1, 1)
+
+        r+=1
+        self.cb_normalize=QtWidgets.QCheckBox()
+        self.cb_normalize.clicked.connect(self._import)
+        self.cb_normalize.setText(_('Apply English stemmer to word field? (GIYF)'))
+        self.cb_normalize.setToolTip(_('Strips suffix -s, -ed, -es, -ing, -tion, -sion, ...'))
+        gridLayout.addWidget(self.cb_normalize, r, 0, 1, 1)
 
         r+=1
         lbl_help=QtWidgets.QLabel()
@@ -122,12 +130,10 @@ class Wordsworth():
                            <b>Make sure to backup first!</b>"""))
         gridLayout.addWidget(lbl_help,r,0,1,1)
 
-
         self.btn_save=QPushButton('Write')
         self.btn_save.setEnabled(False)
         self.btn_save.clicked.connect(self.onWrite)
         gridLayout.addWidget(self.btn_save,r,1,1,1)
-
 
         diag=QDialog(self.browser)
         diag.setLayout(layout)
@@ -201,9 +207,10 @@ class Wordsworth():
             cs=self.cb_casesense.checkState()
             sp=self.cb_rm_space.checkState()
             htm=self.cb_rm_html.checkState()
+            norm=self.cb_normalize.checkState()
 
             self.importer.setFields(wdf,rkf)
-            self.importer.setProperties(ow,cs,sp,htm)
+            self.importer.setProperties(ow,cs,sp,htm,norm)
             try:
                 self.importer.process(self.notes)
             except NoListError as err:

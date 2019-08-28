@@ -56,3 +56,6 @@ dog : 125,769
 cat : 51,175  
 ```dog > cat```  
 
+
+## API Used:
+Porter2-stemmer by Evan Dempsey, https://github.com/evandempsey/porter2-stemmer
