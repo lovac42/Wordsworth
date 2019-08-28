@@ -12,17 +12,19 @@ from .batch import BatchProcessor
 class SpaceSeparatedImporter(BatchProcessor):
     re_validate=re.compile(r'(?:^[^\s]+\s+\d+$)')
 
-    def parseList(self):
+    def parseList(self, offset):
         self.dict={}
         self.startTime=0
-        for line in self.freq_list:
+        self.no_space=True
+        for line in self.freq_list[offset:offset+20000]:
+            offset+=1
             if line:
                 self.updatePTimer(line)
                 try:
                     wd,freq=line.split()
+                    wd=self.cleanWord(wd)
+                    if not self.dict.get(wd):
+                        self.dict[wd]=freq
                 except: #split errors
                     print("ww: dict split error, %s"%line)
-                    continue
-                wd=self.cleanWord(wd)
-                self.dict[wd]=freq
-        self.no_space=True
+        return offset

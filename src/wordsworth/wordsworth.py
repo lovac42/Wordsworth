@@ -106,7 +106,7 @@ class Wordsworth():
         self.cb_rm_space=QtWidgets.QCheckBox()
         self.cb_rm_space.clicked.connect(self._import)
         self.cb_rm_space.setText(_('No Space'))
-        self.cb_rm_space.setToolTip(_('Strip Space during search'))
+        self.cb_rm_space.setToolTip(_('Strip space during search'))
         gridLayout.addWidget(self.cb_rm_space, r, 1, 1, 1)
 
         r+=1
@@ -205,15 +205,15 @@ class Wordsworth():
             self.importer.setProperties(ow,cs,sp,htm)
             try:
                 self.importer.process(self.notes)
-                self.showStats()
             except NoListError as err:
                 showInfo(str(err))
             finally:
                 mw.progress.finish()
+            self.showStats()
 
 
     def showStats(self):
-        tot=len(self.notes)
+        tot=self.importer.stat["total"]
         w=self.importer.stat["written"]
         s=self.importer.stat["skipped"]
         ow=self.importer.stat["overwritten"]

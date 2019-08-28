@@ -47,37 +47,6 @@ class BatchProcessor:
                 data=f.read()
             self.freq_list=re.split(r'\r?\n',data)
 
-
-    def process(self, nids):
-        if not nids:
-            raise NoNoteError
-        if not self.freq_list:
-            raise NoListError
-
-        self.stat={
-            "written":0,
-            "skipped":0,
-            "overwritten":0,
-            "notfound":0,
-            "nofield":0,
-        }
-        self.parseList()
-        mw.checkpoint("Wordsworth")
-        return self.processNotes(nids)
-
-
-    def processNotes(self, nids):
-        self.startTime=0
-        for nid in nids:
-            note=mw.col.getNote(nid)
-            if self.word_field not in note or \
-               self.rank_field not in note or \
-               not note[self.word_field]:
-                self.stat["nofield"]+=1
-                continue
-            self.matchWord(note)
-
-
     def checkList(self):
         "method for validating word lists"
         line_num=1
@@ -86,6 +55,53 @@ class BatchProcessor:
                 self.freq_list=None
                 raise InvalidFormatError(line_num,line_txt)
             line_num+=1
+
+    def process(self, nids):
+        if not nids:
+            raise NoNoteError
+        if not self.freq_list:
+            raise NoListError
+
+        self.stat={
+            "total":len(nids),
+            "written":0,
+            "skipped":0,
+            "overwritten":0,
+            "notfound":0,
+            "nofield":0,
+        }
+
+        #split dict and parse each piece
+        more=split=0
+        LEN=len(self.freq_list)
+        while more<LEN:
+            more=self.parseList(more)
+            mw.checkpoint("Wordsworth")
+            nids=self.processNotes(nids)
+            split+=1
+
+        self.dict=None
+        #Adjust stat count based on number of splits
+        self.stat["nofield"]//=split
+        matched=self.stat["written"]+self.stat["skipped"]
+        self.stat["notfound"]=self.stat["total"]- \
+                        matched-self.stat["nofield"]
+
+
+    def processNotes(self, nids):
+        self.startTime=0
+        noMatchNids=[]
+        for nid in nids:
+            note=mw.col.getNote(nid)
+            if self.word_field not in note or \
+               self.rank_field not in note or \
+               not note[self.word_field]:
+                self.stat["nofield"]+=1
+                continue
+            found=self.matchWord(note)
+            if not found:
+                noMatchNids.append(nid)
+        return noMatchNids #remove matched to prevent double writes
 
 
     def matchWord(self, note):
@@ -105,7 +121,9 @@ class BatchProcessor:
             self.updatePTimer(wd)
         except KeyError:
             self.stat["notfound"]+=1
-            print("ww: no %s in dict"%wd)
+            # print("ww: no %s in dict"%wd)
+            return False
+        return True
 
 
     def cleanWord(self, wd):
@@ -129,6 +147,6 @@ class BatchProcessor:
             mw.progress.update(_("%s"%labelText))
 
 
-    def parseList(self):
+    def parseList(self, offset):
         "abstract method for parsing word lists"
         return

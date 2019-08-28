@@ -12,16 +12,18 @@ from .batch import BatchProcessor
 class CSVImporter(BatchProcessor):
     re_validate=re.compile(r'^.+;.+$')
 
-    def parseList(self):
+    def parseList(self, offset):
         self.dict={}
         self.startTime=0
-        for line in self.freq_list:
+        for line in self.freq_list[offset:offset+20000]:
+            offset+=1
             if line:
                 self.updatePTimer(line)
                 try:
                     wd,freq=line.split(';')
                     wd=self.cleanWord(wd)
-                    self.dict[wd]=freq
+                    if not self.dict.get(wd):
+                        self.dict[wd]=freq
                 except: #split errors
                     print("ww: dict split error, %s"%line)
-                    continue
+        return offset

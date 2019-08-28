@@ -13,10 +13,6 @@ Some word lists can be downloaded here:
 https://www.dropbox.com/sh/cbkrotcwpqrks60/AAB2y42FR-37XM4V5oQeMH7La?dl=0  
 
 
-## Technical:
-Warning: Word list is loaded into ram first, 10mb file is about 200-300mb in ram.  So the current version is not meant for low memory devices. But given that a 20mb word list + Anki is around 400-500mb of ram usage, and that you are not likely to have a list more than 25mb, this isn't much of a concern.
-
-
 ## Screenshots:
 
 <img src="https://github.com/lovac42/Wordsworth/blob/master/screenshots/menuitem.png?raw=true">  
