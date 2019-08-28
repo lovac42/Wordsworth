@@ -22,9 +22,9 @@ class SpaceSeparatedImporter(BatchProcessor):
                 self.updatePTimer(line)
                 try:
                     wd,freq=line.split()
+                    wd=self.cleanWord(wd)
+                    if not self.dict.get(wd):
+                        self.dict[wd]=freq
                 except: #split errors
                     print("ww: dict split error, %s"%line)
-                    continue
-                wd=self.cleanWord(wd)
-                self.dict[wd]=freq
         return offset

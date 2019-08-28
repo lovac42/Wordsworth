@@ -63,6 +63,7 @@ class BatchProcessor:
             raise NoListError
 
         self.stat={
+            "total":len(nids),
             "written":0,
             "skipped":0,
             "overwritten":0,
@@ -76,18 +77,20 @@ class BatchProcessor:
         while more<LEN:
             more=self.parseList(more)
             mw.checkpoint("Wordsworth")
-            self.processNotes(nids)
+            nids=self.processNotes(nids)
             split+=1
 
         self.dict=None
         #Adjust stat count based on number of splits
         self.stat["nofield"]//=split
         matched=self.stat["written"]+self.stat["skipped"]
-        self.stat["notfound"]=len(nids)-matched-self.stat["nofield"]
+        self.stat["notfound"]=self.stat["total"]- \
+                        matched-self.stat["nofield"]
 
 
     def processNotes(self, nids):
         self.startTime=0
+        noMatchNids=[]
         for nid in nids:
             note=mw.col.getNote(nid)
             if self.word_field not in note or \
@@ -95,7 +98,10 @@ class BatchProcessor:
                not note[self.word_field]:
                 self.stat["nofield"]+=1
                 continue
-            self.matchWord(note)
+            found=self.matchWord(note)
+            if not found:
+                noMatchNids.append(nid)
+        return noMatchNids #remove matched to prevent double writes
 
 
     def matchWord(self, note):
@@ -116,6 +122,8 @@ class BatchProcessor:
         except KeyError:
             self.stat["notfound"]+=1
             # print("ww: no %s in dict"%wd)
+            return False
+        return True
 
 
     def cleanWord(self, wd):
