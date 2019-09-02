@@ -1,7 +1,7 @@
 @echo off
 set ZIP=C:\PROGRA~1\7-Zip\7z.exe a -tzip -y -r
 set REPO=wordsworth
-set VERSION=0.0.5
+set VERSION=0.1.0
 
 
 fsum -r -jm -md5 -d%REPO% * > checksum.md5
