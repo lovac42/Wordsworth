@@ -5,18 +5,24 @@
 
 
 from aqt import mw
+from aqt.qt import *
 from anki.hooks import addHook
-from .wordsworth import *
+
+from .config import Config
+from .wordsworth import Wordsworth
 from .const import *
 
+
+conf=Config(ADDONNAME)
 
 def setupMenu(bws):
     act=QAction("Wordsworth: Word Frequency Ranker", bws)
 
-    # ENABLE IF THERE IS NO SHORTCUT CONFLICT
-    # act.setShortcut(QKeySequence("Ctrl+Shift+W"))
+    key=conf.get("hotkey","Ctrl+Shift+W")
+    if key:
+        act.setShortcut(QKeySequence(key))
 
-    act.triggered.connect(lambda:Wordsworth(bws))
+    act.triggered.connect(lambda:Wordsworth(bws,conf))
     bws.form.menuEdit.addSeparator()
     bws.form.menuEdit.addAction(act)
 

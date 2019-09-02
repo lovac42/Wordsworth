@@ -24,8 +24,9 @@ else:
 class Wordsworth():
     importer=None
 
-    def __init__(self, browser):
+    def __init__(self, browser, conf):
         self.browser=browser
+        self.conf=conf
 
         #Must have some notes selected in browser
         try:
@@ -67,7 +68,10 @@ class Wordsworth():
         self.btn_import.clicked.connect(self.onImport)
         gridLayout.addWidget(self.btn_import,r,0,1,1)
 
+        cbs=self.conf.get("case_sensitive",0)
         self.cb_casesense=QtWidgets.QCheckBox()
+        self.cb_casesense.setCheckState(cbs)
+        self.cb_casesense.clicked.connect(self.onChangedCB)
         self.cb_casesense.setText(_('Case Sen..'))
         self.cb_casesense.setToolTip(_('Case Sensitive Match'))
         gridLayout.addWidget(self.cb_casesense, r, 1, 1, 1)
@@ -77,14 +81,19 @@ class Wordsworth():
         label=QtWidgets.QLabel("Word Field (READ):")
         fieldLayout.addWidget(label)
 
+        idx=self.conf.get("word_field",0)
         self.wordField=QComboBox()
         self.wordField.setMinimumWidth(250)
         self.wordField.addItems(fields)
-        self.wordField.currentIndexChanged.connect(self.valueChange)
+        self.wordField.setCurrentIndex(idx)
+        self.wordField.currentIndexChanged.connect(self.checkWritable)
         fieldLayout.addWidget(self.wordField)
         gridLayout.addLayout(fieldLayout,r,0, 1, 1)
 
+        cbs=self.conf.get("strip_html",0)
         self.cb_rm_html=QtWidgets.QCheckBox()
+        self.cb_rm_html.setCheckState(cbs)
+        self.cb_rm_html.clicked.connect(self.onChangedCB)
         self.cb_rm_html.setText(_('No HTML'))
         self.cb_rm_html.setToolTip(_('Strip HTML during search'))
         gridLayout.addWidget(self.cb_rm_html, r, 1, 1, 1)
@@ -94,14 +103,19 @@ class Wordsworth():
         label=QtWidgets.QLabel("Rank Field (WRITE):")
         fieldLayout.addWidget(label)
 
+        idx=self.conf.get("rank_field",0)
         self.rankField=QComboBox()
         self.rankField.setMinimumWidth(250)
         self.rankField.addItems(fields)
-        self.rankField.currentIndexChanged.connect(self.valueChange)
+        self.rankField.setCurrentIndex(idx)
+        self.rankField.currentIndexChanged.connect(self.checkWritable)
         fieldLayout.addWidget(self.rankField)
         gridLayout.addLayout(fieldLayout,r,0, 1, 1)
 
+        cbs=self.conf.get("strip_space",0)
         self.cb_rm_space=QtWidgets.QCheckBox()
+        self.cb_rm_space.setCheckState(cbs)
+        self.cb_rm_space.clicked.connect(self.onChangedCB)
         self.cb_rm_space.setText(_('No Space'))
         self.cb_rm_space.setToolTip(_('Strip space during search'))
         gridLayout.addWidget(self.cb_rm_space, r, 1, 1, 1)
@@ -138,14 +152,28 @@ class Wordsworth():
         diag.exec_()
 
 
-    def valueChange(self):
+    def onChangedCB(self):
+        cs=self.cb_casesense.checkState()
+        sp=self.cb_rm_space.checkState()
+        htm=self.cb_rm_html.checkState()
+        self.conf.set("case_sensitive",cs)
+        self.conf.set("strip_html",htm)
+        self.conf.set("strip_space",sp)
+
+
+    def checkWritable(self):
+        idx=self.wordField.currentIndex()
+        self.conf.set("word_field",idx)
+        idx=self.rankField.currentIndex()
+        self.conf.set("rank_field",idx)
+
         if not self.importer or not self.freq_file:
             self.btn_save.setEnabled(False)
             return
 
         wdf=self.wordField.currentText()
         rkf=self.rankField.currentText()
-        if wdf==rkf:
+        if not wdf or not rkf or wdf==rkf:
             self.btn_save.setEnabled(False)
         else:
             self.btn_save.setEnabled(True)
@@ -179,7 +207,7 @@ class Wordsworth():
             self.importer.checkList()
             name=self.freq_file.split("/")[-1]
             self.btn_import.setText("Loaded: "+name)
-            self.valueChange()
+            self.checkWritable()
 
         except InvalidFormatError as e:
             self.btn_import.setText("Not the right format")
@@ -196,9 +224,9 @@ class Wordsworth():
     def _stemmer(self):
         checked=self.cb_normalize.checkState()
         if checked==2:
-            msg='Stemmer: apply to both word list and word field'
+            msg='Stemmer: strip both word field and word list'
         elif checked==1:
-            msg='Stemmer: apply to word field only'
+            msg='Stemmer: strip word field only'
         else:
             msg='Apply English stemmer? (GIYF)'
         self.cb_normalize.setText(_(msg))

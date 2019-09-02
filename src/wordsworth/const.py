@@ -10,3 +10,6 @@ from anki import version
 CCBC = version.endswith("ccbc")
 ANKI21 = not CCBC and version.startswith("2.1.")
 ANKI20 = version.startswith("2.0.")
+
+ADDONNAME = "Wordsworth"
+
