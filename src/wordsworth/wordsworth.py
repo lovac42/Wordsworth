@@ -148,7 +148,7 @@ class Wordsworth():
 
         diag=QDialog(self.browser)
         diag.setLayout(layout)
-        diag.setWindowTitle('Wordsworth: Word Frequency Ranker')
+        diag.setWindowTitle(TITLE)
         diag.exec_()
 
 

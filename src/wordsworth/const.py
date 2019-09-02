@@ -13,3 +13,4 @@ ANKI20 = version.startswith("2.0.")
 
 ADDONNAME = "Wordsworth"
 
+TITLE = "Wordsworth: Word Frequency Ranker"
