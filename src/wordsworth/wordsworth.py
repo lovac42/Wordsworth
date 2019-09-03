@@ -36,11 +36,11 @@ class Wordsworth():
             return
 
         #Note in editor must be removed to update templates.
-        if CCBC or ANKI20:
+        if ANKI21:
+            self.browser.editor.saveNow(self.hideEditor)
+        else:
             self.browser.editor.saveNow()
             self.hideEditor()
-        else:
-            self.browser.editor.saveNow(self.hideEditor)
 
         self.showDialog()
 
