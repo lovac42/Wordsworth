@@ -10,20 +10,21 @@ from anki.hooks import addHook
 
 from .config import Config
 from .wordsworth import Wordsworth
+from .utils import getMenu
 from .const import *
 
 
 conf=Config(ADDONNAME)
 
 def setupMenu(bws):
+    key=conf.get("hotkey", DEFAULT_HOTKEY) or QKeySequence()
+
     act=QAction(TITLE, bws)
-
-    key=conf.get("hotkey","Ctrl+Shift+W")
-    if key:
-        act.setShortcut(QKeySequence(key))
-
+    act.setShortcut(QKeySequence(key))
     act.triggered.connect(lambda:Wordsworth(bws,conf))
-    bws.form.menuEdit.addSeparator()
-    bws.form.menuEdit.addAction(act)
+
+    menu=getMenu(bws,'&Tools')
+    # menu.addSeparator()
+    menu.addAction(act)
 
 addHook("browser.setupMenus", setupMenu)

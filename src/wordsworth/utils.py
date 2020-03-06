@@ -8,6 +8,18 @@ from aqt import mw
 from anki.utils import ids2str
 
 
+def getMenu(parent, menuName):
+    menu=None
+    for a in parent.form.menubar.actions():
+        if menuName == a.text():
+            menu=a.menu()
+            # menu.addSeparator()
+            break
+    if not menu:
+        menu=mw.form.menubar.addMenu(menuName)
+    return menu
+
+
 def fieldNamesForNotes(nids):
     fields = set()
     mids = mw.col.db.list("select distinct mid from notes where id in %s" % ids2str(nids))
