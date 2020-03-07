@@ -16,7 +16,7 @@ def getMenu(parent, menuName):
             # menu.addSeparator()
             break
     if not menu:
-        menu=mw.form.menubar.addMenu(menuName)
+        menu=parent.form.menubar.addMenu(menuName)
     return menu
 
 
